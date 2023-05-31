@@ -1,5 +1,5 @@
 from django.contrib.auth.models import Group
-from rest_framework import viewsets
+from rest_framework import viewsets, response
 from rest_framework import mixins, generics
 from rest_framework import permissions
 from .serializers import UserSerializer, GroupSerializer
@@ -7,6 +7,7 @@ from users.models import User
 from rest_framework_simplejwt.views import TokenObtainPairView
 from . import serializers
 from rest_framework.decorators import api_view
+from .utils.square import Square
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -36,3 +37,11 @@ class CreateUserView(mixins.CreateModelMixin, generics.GenericAPIView):
     
     def put(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
+
+
+@api_view(['GET'])
+def list_catalog(request):
+    square = Square()
+    items = square.list_all_items()
+    
+    return response.Response(items)
