@@ -13,6 +13,5 @@ RUN pip3  install -r requirements.txt
 
 COPY . .
 
-RUN python3 manage.py migrate
 
-CMD ["gunicorn", "gold_cart.wsgi"]
+CMD ["gunicorn gold_cart.wsgi && python3 manage.py migrate"]
