@@ -14,4 +14,4 @@ RUN pip3  install -r requirements.txt
 COPY . .
 
 
-CMD ["gunicorn gold_cart.wsgi && python3 manage.py migrate"]
+CMD ["/bin/bash","-c","./startup.sh"]
