@@ -93,7 +93,7 @@ DATABASES = {
         "NAME": os.environ.get("DB_NAME", os.environ.get("PGDATABASE")),
         "USER": os.environ.get("DB_USER", os.environ.get("PGUSER")),
         "PASSWORD": os.environ.get("DB_PASSWORD", os.environ.get("PGPASSWORD")),
-        'HOST': os.environ.get("PGHOST", 'goldcart-db'),
+        'HOST': os.environ.get("PGHOST", "localhost"),
         'PORT': os.environ.get("PGPORT", '5432'),
     }
 }
