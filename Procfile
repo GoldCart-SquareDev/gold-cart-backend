@@ -1,1 +1,1 @@
-web: gunicorn 'name-of-application.wsgi
+web: gunicorn gold_cart.wsgi
