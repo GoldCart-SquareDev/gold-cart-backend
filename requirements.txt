@@ -27,3 +27,4 @@ sqlparse==0.4.4
 squareup==27.0.0.20230517
 typing_extensions==4.6.2
 urllib3==2.0.2
+whitenoise==6.4.0

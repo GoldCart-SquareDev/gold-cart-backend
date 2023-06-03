@@ -1,3 +1,3 @@
 !# /bin/bash
-python3 manage.py migrate
+python manage.py collectstatic
 gunicorn gold_cart.wsgi
