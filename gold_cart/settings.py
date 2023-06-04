@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 import os
 from datetime import timedelta
+import dj_database_url
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,7 +27,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get("DEBUG", True)
+DEBUG = os.environ.get("DJANGO_DEBUG", "") != "False"
 
 ALLOWED_HOSTS = ["*"]
 CSRF_TRUSTED_ORIGINS = ['https://*.railway.app']
@@ -88,16 +90,21 @@ WSGI_APPLICATION = "gold_cart.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.contrib.gis.db.backends.postgis",
-        "NAME": os.environ.get("DB_NAME", os.environ.get("PGDATABASE")),
-        "USER": os.environ.get("DB_USER", os.environ.get("PGUSER")),
-        "PASSWORD": os.environ.get("DB_PASSWORD", os.environ.get("PGPASSWORD")),
-        'HOST': os.environ.get("PGHOST", "localhost"),
-        'PORT': os.environ.get("PGPORT", '5432'),
-    }
+if os.environ.get("RAILWAY_RUN_DB_CONNECT", False) == True:
+    DATABASES = {
+    "default": dj_database_url.config(default=os.environ.get("DATABASE_URL"), conn_max_age=1800),
 }
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.contrib.gis.db.backends.postgis",
+            "NAME": os.environ.get("DB_NAME", os.environ.get("PGDATABASE")),
+            "USER": os.environ.get("DB_USER", os.environ.get("PGUSER")),
+            "PASSWORD": os.environ.get("DB_PASSWORD", os.environ.get("PGPASSWORD")),
+            'HOST': os.environ.get("PGHOST", "localhost"),
+            'PORT': os.environ.get("PGPORT", '5432'),
+        }
+    }
 
 
 # Password validation

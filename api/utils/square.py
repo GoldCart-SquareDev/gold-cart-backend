@@ -32,8 +32,8 @@ class Square:
 
     def list_all_items(self, **kwargs):
         result = self.client.catalog.list_catalog(types="ITEM,IMAGE")
-        images = self.__get_item_images(result)
         if result.is_success():
+            images = self.__get_item_images(result)
             items = []
             for object in result.body["objects"]:
                 if object["type"] == "ITEM": 
