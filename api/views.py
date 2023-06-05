@@ -41,7 +41,16 @@ class CreateUserView(mixins.CreateModelMixin, generics.GenericAPIView):
 
 @api_view(['GET'])
 def list_catalog(request):
+    location = request.user.location
     square = Square()
     items = square.list_all_items()
-    
-    return response.Response(items)
+    items_to_display = []
+    if location != None:
+        for item in items:
+            locations = item.get("locations")
+            if location in locations:
+                items_to_display.append(item)
+    else:
+        items_to_display = items
+
+    return response.Response(items_to_display)
