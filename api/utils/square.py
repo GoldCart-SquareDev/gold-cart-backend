@@ -36,7 +36,7 @@ class Square:
             if result.is_success():
                 location_name_short = result.body["location"]["name"]
                 location_name = result.body["location"]["business_name"]
-                data = {location_name_short: location_name}
+                data = {location_name_short: location_name, "location_id": result.body["id"]}
                 location_data.append(data)
             else:
                 return None
@@ -61,7 +61,8 @@ class Square:
 
                     if object["type"] == "ITEM":
                         item_details = {
-                            "id": object["id"],
+                            # "id": object["id"],
+                            "id": object["item_data"]["variations"][0]["id"],
                             "name": object["item_data"]["name"],
                             "description": object["item_data"].get("description"),
                             "price": self.__convert_amount(price_money["amount"]),
@@ -77,8 +78,22 @@ class Square:
             logger.error(result.errors)
             return None
 
-    def view_catalog_item(self, **kwargs):
-        ...
+    def checkout(self, **kwargs):
+        result = self.client.checkout.create_payment_link(
+        body = {
+            "idempotency_key": f"{uuid4()}",
+            "order": {
+            "location_id": kwargs.get("location_id"),
+            "line_items": kwargs.get("line_items")
+            }
+        }
+        )
+        if result.is_success():
+            url = result.body['payment_link']['url']
+            return url
+        else:
+            print(result.error)
+            return None
 
     def list_catalog_items(self, **kwargs):
         ...

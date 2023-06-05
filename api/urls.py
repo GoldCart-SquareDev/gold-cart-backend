@@ -18,4 +18,5 @@ urlpatterns = [
     path("token/", views.MyTokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     path("items/", views.list_catalog, name="items"),
+    path("checkout/", views.checkout, name="checkout"),
 ]
