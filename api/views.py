@@ -14,7 +14,8 @@ class UserViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
-    queryset = User.objects.all().order_by('-date_joined')
+
+    queryset = User.objects.all().order_by("-date_joined")
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAdminUser, permissions.IsAuthenticated]
 
@@ -23,23 +24,24 @@ class GroupViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows groups to be viewed or edited.
     """
+
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
     permission_classes = [permissions.IsAdminUser]
-    
-    
+
+
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = serializers.MyTokenObtainPairSerializer
-    
-    
+
+
 class CreateUserView(mixins.CreateModelMixin, generics.GenericAPIView):
     serializer_class = serializers.CreateUserSerializer
-    
+
     def put(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
 
 
-@api_view(['GET'])
+@api_view(["GET"])
 def list_catalog(request):
     location = request.user.location
     square = Square()
@@ -53,4 +55,3 @@ def list_catalog(request):
     else:
         items_to_display = items
     return response.Response(items_to_display, status=status.HTTP_200_OK)
-
