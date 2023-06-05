@@ -43,15 +43,17 @@ class CreateUserView(mixins.CreateModelMixin, generics.GenericAPIView):
 
 @api_view(["GET"])
 def list_catalog(request):
-    location = request.user.location
     square = Square()
     items = square.list_all_items()
     items_to_display = []
-    if location:
-        for item in items:
-            locations = item.get("locations")
-            if locations and location in locations:
-                items_to_display.append(item)
-    else:
-        items_to_display = items
-    return response.Response(items_to_display, status=status.HTTP_200_OK)
+    if request.user.is_authenticated(): 
+        location = request.user.location
+        if location:
+            for item in items:
+                locations = item.get("locations")
+                if locations and location in locations:
+                    items_to_display.append(item)
+        else:
+            items_to_display = items
+        return response.Response(items_to_display, status=status.HTTP_200_OK)
+    return response.Response(items, status=status.HTTP_200_OK)
