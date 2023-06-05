@@ -1,12 +1,12 @@
 from django.contrib.auth.models import Group
-from rest_framework import viewsets, response
-from rest_framework import mixins, generics
-from rest_framework import permissions
+from rest_framework import viewsets, response, views
+from rest_framework import mixins, generics, permissions, status
 from .serializers import UserSerializer, GroupSerializer
 from users.models import User
 from rest_framework_simplejwt.views import TokenObtainPairView
 from . import serializers
 from rest_framework.decorators import api_view
+from django.shortcuts import get_object_or_404
 from .utils.square import Square
 
 
@@ -16,7 +16,7 @@ class UserViewSet(viewsets.ModelViewSet):
     """
     queryset = User.objects.all().order_by('-date_joined')
     serializer_class = UserSerializer
-    permission_classes = [permissions.IsAdminUser]
+    permission_classes = [permissions.IsAdminUser, permissions.IsAuthenticated]
 
 
 class GroupViewSet(viewsets.ModelViewSet):
@@ -45,12 +45,12 @@ def list_catalog(request):
     square = Square()
     items = square.list_all_items()
     items_to_display = []
-    if location != None:
+    if location:
         for item in items:
             locations = item.get("locations")
-            if location in locations:
+            if locations and location in locations:
                 items_to_display.append(item)
     else:
         items_to_display = items
+    return response.Response(items_to_display, status=status.HTTP_200_OK)
 
-    return response.Response(items_to_display)

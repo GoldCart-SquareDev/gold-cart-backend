@@ -49,6 +49,7 @@ class Square:
         if result.is_success():
             images = self.__get_item_images(result)
             items = []
+            locations = None
             for object in result.body["objects"]:
                 if object["type"] == "ITEM": 
                     if object["present_at_all_locations"] == "false":
@@ -62,7 +63,7 @@ class Square:
                         item_details = {
                             "id": object["id"],
                             "name": object["item_data"]["name"],
-                            "description": object["item_data"]["description"],
+                            "description": object["item_data"].get("description"),
                             "price": self.__convert_amount(price_money["amount"]),
                             "currency": price_money["currency"],
                             "location": locations,

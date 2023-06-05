@@ -17,12 +17,13 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
-        fields = ['url', 'email', "password" , 'groups']
+        fields = ['url', 'email', 'password', 'first_name', 'last_name', 'location']
 
     def create(self, validated_data):
         password = validated_data.pop('password')
         user = super().create(validated_data)
         user.set_password(password)
+        user.is_active = True
         user.save()
         return user
     
@@ -30,7 +31,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 class CreateUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['email', 'password', 'first_name', 'last_name']
+        fields = ['email', 'password', 'first_name', 'last_name', 'location']
         
     def create(self, validated_data):
         password = validated_data.pop('password')
@@ -39,7 +40,6 @@ class CreateUserSerializer(serializers.ModelSerializer):
         user.is_active = True
         user.save()
         return user
-        
 
 class GroupSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
