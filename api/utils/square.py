@@ -28,27 +28,45 @@ class Square:
                 images[object["id"]] = object["image_data"]["url"]
         logger.info("Images retrieved successfully")
         return images
-    
+
+    def __get_location_data(self, location_ids):
+        location_data = []
+        for location_id in location_ids:
+            result = self.client.locations.retrieve_location(location_id=location_id)
+            if result.is_success():
+                location_name_short = result.body["location"]["name"]
+                location_name = result.body["location"]["business_name"]
+                data = {location_name_short: location_name}
+                location_data.append(data)
+            else:
+                return None
+        return location_data
 
     def list_all_items(self, **kwargs):
         result = self.client.catalog.list_catalog(types="ITEM,IMAGE")
         if result.is_success():
             images = self.__get_item_images(result)
             items = []
+            locations = None
             for object in result.body["objects"]:
-                if object["type"] == "ITEM": 
+                if object["type"] == "ITEM":
+                    if object["present_at_all_locations"] == "false":
+                        locations = self.__get_location_data(
+                            object["present_at_location_ids"]
+                        )
                     price_money = object["item_data"]["variations"][0][
                         "item_variation_data"
                     ]["price_money"]
                     image_id = object["item_data"].get("image_ids", [None])
-                        
+
                     if object["type"] == "ITEM":
                         item_details = {
                             "id": object["id"],
                             "name": object["item_data"]["name"],
-                            "description": object["item_data"]["description"],
+                            "description": object["item_data"].get("description"),
                             "price": self.__convert_amount(price_money["amount"]),
                             "currency": price_money["currency"],
+                            "location": locations,
                             "image_url": images.get(image_id[0]),
                         }
                         items.append(item_details)
